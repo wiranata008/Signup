@@ -1,0 +1,73 @@
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/System.hpp>
+
+int main() {
+    // Ukuran jendela game
+    const int windowWidth = 800;
+    const int windowHeight = 600;
+
+    // Membuat jendela game
+    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Pixel Adventure");
+
+    // Kecepatan gerakan pemain
+    float playerSpeed = 200.0f;
+
+    // Membuat pemain (player) sebagai persegi
+    sf::RectangleShape player(sf::Vector2f(50.0f, 50.0f));
+    player.setFillColor(sf::Color::Green);
+    player.setPosition(windowWidth / 2, windowHeight / 2);
+
+    // Membuat latar belakang
+    sf::Texture backgroundTexture;
+    if (!backgroundTexture.loadFromFile("background.png")) {
+        // Jika file tidak ditemukan, gunakan warna default
+        window.clear(sf::Color::Cyan);
+    }
+    sf::Sprite background(backgroundTexture);
+
+    // Waktu (delta time)
+    sf::Clock clock;
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+        }
+
+        // Delta time
+        sf::Time dt = clock.restart();
+
+        // Input untuk menggerakkan pemain
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+            player.move(0, -playerSpeed * dt.asSeconds());
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+            player.move(0, playerSpeed * dt.asSeconds());
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+            player.move(-playerSpeed * dt.asSeconds(), 0);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            player.move(playerSpeed * dt.asSeconds(), 0);
+        }
+
+        // Membersihkan layar
+        window.clear();
+
+        // Gambar latar belakang (jika ada)
+        if (backgroundTexture.getSize().x > 0) {
+            window.draw(background);
+        }
+
+        // Gambar pemain
+        window.draw(player);
+
+        // Tampilkan apa yang digambar
+        window.display();
+    }
+
+    return 0;
+}
